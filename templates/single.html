@@ -1,0 +1,228 @@
+{% extends "layout.html" %}
+{% block main %}
+    <!----details-product-slider--->
+    <!-- Include the Etalage files -->
+    <link rel="stylesheet" href="../static/css/etalage.css">
+    <script src="../static/js/jquery.etalage.min.js"></script>
+    <!-- Include the Etalage files -->
+    <script>
+        jQuery(document).ready(function ($) {
+
+            $('#etalage').etalage({
+                thumb_image_width: 300,
+                thumb_image_height: 400,
+
+                show_hint: true,
+                click_callback: function (image_anchor, instance_id) {
+                    alert('Callback example:\nYou clicked on an image with the anchor: "' + image_anchor + '"\n(in Etalage instance: "' + instance_id + '")');
+                }
+            });
+            // This is for the dropdown list example:
+            $('.dropdownlist').change(function () {
+                etalage_show($(this).find('option:selected').attr('class'));
+            });
+
+        });
+    </script>
+    <!----//details-product-slider--->
+    <script src="../static/js/easyResponsiveTabs.js" type="text/javascript"></script>
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $('#horizontalTab').easyResponsiveTabs({
+                type: 'default', //Types: default, vertical, accordion
+                width: 'auto', //auto or any width like 600px
+                fit: true   // 100% fit in a container
+            });
+        });
+    </script>
+    <div class="col-md-9 content_right">
+        <div class="dreamcrub">
+            <ul class="breadcrumbs">
+                <li class="home">
+                    <a href="{{ url_for('index') }}" title="Go to Home Page">Home</a>
+                    <span>&gt;</span>
+                </li>
+                <li class="home">&nbsp;
+                    Apparel&nbsp;
+                    <span>&gt;</span>
+                </li>
+                <li class="home">
+                    &nbsp;Women
+                    <span>&gt;</span>
+                </li>
+                <li class="women">
+                    {{ data['name'] }}
+                </li>
+            </ul>
+            <ul class="previous">
+                <li><a href="{{ url_for('index') }}">Back to Previous Page</a></li>
+            </ul>
+            <div class="clearfix"></div>
+        </div>
+        <div class="singel_right">
+            <div class="labout span_1_of_a1">
+                <!-- start product_slider -->
+                <ul id="etalage">
+                    {% for image in data['images'] %}<li>
+                        <img class="etalage_thumb_image" src="{{ image }}" class="img-responsive"/>
+                        <img class="etalage_source_image" src="{{ image }}" class="img-responsive"/>
+
+                    </li>{% endfor %}
+                    <div class="clearfix"></div>
+                </ul>
+                <!-- end product_slider -->
+            </div>
+            <div class="cont1 span_2_of_a1">
+                <h1>{{ data['name'] }}</h1>
+                {#<ul class="rating">
+                    <li><a class="product-rate" href="#"> </a> <span> </span></li>
+                    <li><a href="#">1 Review(s) Add Review</a></li>
+                    <div class="clearfix"></div>
+                </ul>#}
+                <div class="price_single">
+{#                    <span class="reducedfrom">$140.00</span>#}
+                    <span class="actual">{{ data['price'] }} грн.</span>{#<a href="#">click for offer</a>#}
+                </div>
+                <h2 class="quick">Quick Overview:</h2>
+                <p class="quick_desc">{{ data['description'] }}</p>
+                {#<ul class="size">
+                    <h3>Size</h3>
+                    <li><a href="#">25</a></li>
+                    <li><a href="#">26</a></li>
+                    <li><a href="#">27</a></li>
+                    <li><a href="#">28</a></li>
+                    <li><a href="#">29</a></li>
+                    <li><a href="#">30</a></li>
+                    <li><a href="#">31</a></li>
+                    <li><a href="#">32</a></li>
+                    <li><a href="#">33</a></li>
+                </ul>#}
+                <ul class="product-qty">
+                    <span>Quantity:</span>
+                    <select>
+                        <option>1</option>
+                        <option>2</option>
+                        <option>3</option>
+                        <option>4</option>
+                        <option>5</option>
+                        <option>6</option>
+                    </select>
+                </ul>
+                <div class="btn_form">
+                    <form>
+                        <input type="submit" value="Add to Cart" title="" onclick="buy({{ data['id'] }}, 1)">
+                    </form>
+                </div>
+            </div>
+            <div class="clearfix"></div>
+        </div>
+        <div class="sap_tabs">
+            <div id="horizontalTab" style="display: block; width: 100%; margin: 0px;">
+                <ul class="resp-tabs-list">
+                    <li class="resp-tab-item" aria-controls="tab_item-0" role="tab"><span>Product Description</span>
+                    </li>
+                    <li class="resp-tab-item" aria-controls="tab_item-1" role="tab">
+                        <span>Additional Information</span></li>
+                    <li class="resp-tab-item" aria-controls="tab_item-2" role="tab"><span>Reviews</span></li>
+                    <div class="clear"></div>
+                </ul>
+                <div class="resp-tabs-container">
+                    <div class="tab-1 resp-tab-content" aria-labelledby="tab_item-0">
+                        <div class="facts">
+                            <ul class="tab_list">
+                                <li><a href="#">Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam
+                                    nonummy nibh euismod tincidunt ut laoreet dolore magna aliquam erat volutpat. Ut
+                                    wisi enim ad minim veniam, quis nostrud exerci tation ullamcorper suscipit
+                                    lobortis nisl ut aliquip ex ea commodo consequat</a></li>
+                                <li><a href="#">augue duis dolore te feugait nulla facilisi. Nam liber tempor cum
+                                    soluta nobis eleifend option congue nihil imperdiet doming id quod mazim
+                                    placerat facer possim assum. Typi non habent claritatem insitam; est usus
+                                    legentis in iis qui facit eorum claritatem. Investigatione</a></li>
+                                <li><a href="#">claritatem insitam; est usus legentis in iis qui facit eorum
+                                    claritatem. Investigationes demonstraverunt lectores legere me lius quod ii
+                                    legunt saepius. Claritas est etiam processus dynamicus, qui sequitur mutationem
+                                    consuetudium lectorum. Mirum est notare quam littera gothica</a></li>
+                                <li><a href="#">Mirum est notare quam littera gothica, quam nunc putamus parum
+                                    claram, anteposuerit litterarum formas humanitatis per seacula quarta decima et
+                                    quinta decima. Eodem modo typi, qui nunc nobis videntur parum clari, fiant
+                                    sollemnes in futurum.</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="tab-1 resp-tab-content" aria-labelledby="tab_item-1">
+                        <div class="facts">
+                            <ul class="tab_list">
+                                <li><a href="#">augue duis dolore te feugait nulla facilisi. Nam liber tempor cum
+                                    soluta nobis eleifend option congue nihil imperdiet doming id quod mazim
+                                    placerat facer possim assum. Typi non habent claritatem insitam; est usus
+                                    legentis in iis qui facit eorum claritatem. Investigatione</a></li>
+                                <li><a href="#">claritatem insitam; est usus legentis in iis qui facit eorum
+                                    claritatem. Investigationes demonstraverunt lectores legere me lius quod ii
+                                    legunt saepius. Claritas est etiam processus dynamicus, qui sequitur mutationem
+                                    consuetudium lectorum. Mirum est notare quam littera gothica</a></li>
+                                <li><a href="#">Mirum est notare quam littera gothica, quam nunc putamus parum
+                                    claram, anteposuerit litterarum formas humanitatis per seacula quarta decima et
+                                    quinta decima. Eodem modo typi, qui nunc nobis videntur parum clari, fiant
+                                    sollemnes in futurum.</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="tab-1 resp-tab-content" aria-labelledby="tab_item-2">
+                        <ul class="tab_list tab_last">
+                            <li><a href="#">Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam
+                                nonummy nibh euismod tincidunt ut laoreet dolore magna aliquam erat volutpat. Ut
+                                wisi enim ad minim veniam, quis nostrud exerci tation ullamcorper suscipit lobortis
+                                nisl ut aliquip ex ea commodo consequat</a></li>
+                            <li><a href="#">augue duis dolore te feugait nulla facilisi. Nam liber tempor cum soluta
+                                nobis eleifend option congue nihil imperdiet doming id quod mazim placerat facer
+                                possim assum. Typi non habent claritatem insitam; est usus legentis in iis qui facit
+                                eorum claritatem. Investigatione</a></li>
+                            <li><a href="#">claritatem insitam; est usus legentis in iis qui facit eorum claritatem.
+                                Investigationes demonstraverunt lectores leg</a></li>
+                            <li><a href="#">Mirum est notare quam littera gothica, quam nunc putamus parum claram,
+                                anteposuerit litterarum formas humanitatis per seacula quarta decima et quinta
+                                decima. Eodem modo typi, qui nunc nobis videntur parum clari, fiant sollemnes in
+                                futurum.</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <h3 class="like">You Might Also Like</h3>
+        <ul id="flexiselDemo3">
+            {% for related_product in related %}
+                <li><img src="../static/images/{{ related_product['id'] }}/0.jpg" class="img-responsive"/>
+                <div class="grid-flex"><a href="#">{{ related_product['name'] }}</a>
+                    <p>{{ related_product['price'] }} грн.</p></div>
+            </li>
+            {% endfor %}
+        </ul>
+        <script type="text/javascript">
+            $(window).load(function () {
+                $("#flexiselDemo3").flexisel({
+                    visibleItems: 3,
+                    animationSpeed: 1000,
+                    autoPlay: true,
+                    autoPlaySpeed: 3000,
+                    pauseOnHover: true,
+                    enableResponsiveBreakpoints: true,
+                    responsiveBreakpoints: {
+                        portrait: {
+                            changePoint: 480,
+                            visibleItems: 1
+                        },
+                        landscape: {
+                            changePoint: 640,
+                            visibleItems: 2
+                        },
+                        tablet: {
+                            changePoint: 768,
+                            visibleItems: 3
+                        }
+                    }
+                });
+
+            });
+        </script>
+    </div>
+{% endblock %}

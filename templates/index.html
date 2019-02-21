@@ -1,0 +1,138 @@
+{% extends "layout.html" %}
+{% block main %}
+        <div class="col-md-9 content_right">
+            <div class="client_box">
+                <ul class="clients">
+                    <li><img src="../static/images/c1.png" class="img-responsive" alt=""/></li>
+                    <li><img src="../static/images/c2.png" class="img-responsive" alt=""/></li>
+                    <li><img src="../static/images/c3.png" class="img-responsive" alt=""/></li>
+                    <li><img src="../static/images/c4.png" class="img-responsive" alt=""/></li>
+                </ul>
+            </div>
+            <div class="content_right-box">
+                <div class="col-md-8">
+                    <div class="grid1">
+                        <h5>Watches</h5>
+                        <div class="view view-first">
+                            <img src="../static/images/pic1.jpg" class="img-responsive" alt=""/>
+                            <a href="{{ url_for('single') }}">
+                                <div class="mask">
+                                    <h3>Quick Look</h3>
+                                    <p>-----Or----</p>
+                                    <h4>Add To Basket</h4>
+                                </div>
+                            </a>
+                        </div>
+                        <h6>$499</h6>
+                    </div>
+                    <div class="grid1 box4">
+                        <h5>T-Shirt with print</h5>
+                        <div class="view view-first">
+                            <img src="../static/images/pic2.jpg" class="img-responsive" alt=""/>
+                            <a href="{{ url_for('single') }}">
+                                <div class="mask mask1">
+                                    <h3>Quick Look</h3>
+                                    <p>-----Or----</p>
+                                    <h4>Add To Basket</h4>
+                                </div>
+                            </a>
+                        </div>
+                        <h6>$59</h6>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <a href="{{ url_for('single') }}">
+                        <div class="grid2">
+                            <div class="view view-first">
+                                <img src="../static/images/pic3.jpg" class="img-responsive" alt=""/>
+                                <h5>Cap</h5>
+                                <h6>$55</h6>
+                            </div>
+                        </div>
+                    </a></div>
+                <div class="col-md-4">
+                <a href="{{ url_for('single') }}">
+                    <div class="grid2 span_1">
+                        <div class="view view-first">
+                            <img src="../static/images/pic4.jpg" class="img-responsive" alt=""/>
+                            <h5>Glasses</h5>
+                            <h6>$244</h6>
+                        </div>
+                    </div>
+                </a>
+                </div>
+                <div class="col-md-4">
+                <a href="{{ url_for('single') }}">
+                    <div class="grid2 span_1">
+                        <div class="view view-first">
+                            <img src="../static/images/pic5.jpg" class="img-responsive" alt=""/>
+                            <h5>Shoes</h5>
+                            <h6>$199</h6>
+                        </div>
+                    </div>
+                </a>
+                </div>
+            </div>
+            <div class="clearfix"></div>
+        </div>
+        <div class="box3">
+            <div class="col-md-4">
+                <a href="{{ url_for('single') }}">
+                    <div class="grid3 view view-first">
+                        <img src="../static/images/pic6.jpg" class="img-responsive" alt=""/>
+                    </div>
+                </a>
+            </div>
+            <div class="col-md-4">
+                <a href="{{ url_for('single') }}">
+                    <div class="grid3  view view-first">
+                        <img src="../static/images/pic7.jpg" class="img-responsive" alt=""/>
+                    </div>
+                </a>
+            </div>
+            <div class="col-md-4">
+                <a href="{{ url_for('single') }}">
+                    <div class="grid3 view view-first">
+                        <img src="../static/images/pic8.jpg" class="img-responsive" alt=""/>
+                    </div>
+                </a>
+            </div>
+            <div class="clearfix"></div>
+        </div>
+        <div class="box4">
+            <div class="col-md-6">
+                <div class="grid1">
+                    <h5>Shoes</h5>
+                    <div class="view view-first">
+                        <img src="../static/images/pic9.jpg" class="img-responsive" alt=""/>
+                        <a href="{{ url_for('single') }}">
+                            <div class="mask mask2">
+                                <h3>Quick Look</h3>
+                                <p>-----Or----</p>
+                                <h4>Add To Basket</h4>
+                            </div>
+                        </a>
+                    </div>
+                    <h6>$199</h6>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="grid1">
+                    <h5>Purse</h5>
+                    <div class="view view-first">
+                        <img src="../static/images/pic10.jpg" class="img-responsive" alt=""/>
+                        <a href="{{ url_for('single') }}">
+                            <div class="mask mask2">
+                                <h3>Quick Look</h3>
+                                <p>-----Or----</p>
+                                <h4>Add To Basket</h4>
+                            </div>
+                        </a>
+                    </div>
+                    <h6>$295</h6>
+                </div>
+            </div>
+            <div class="clearfix"></div>
+        </div>
+    </div>
+{% endblock %}

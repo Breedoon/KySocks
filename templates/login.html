@@ -1,0 +1,47 @@
+{% extends "layout.html" %}
+{% block main %}
+    <script type="text/javascript" src="../static/js/login.js"></script>
+    <div class="col-md-9 content_right">
+        <div class="dreamcrub">
+            <ul class="breadcrumbs">
+                <li class="home">
+                    <a href="{{ url_for('index') }}" title="Go to Home Page">Home</a>&nbsp;
+                    <span>&gt;</span>
+                </li>
+                <li class="women">
+                    Login
+                </li>
+            </ul>
+            <ul class="previous">
+                <li><a href="{{ url_for('index') }}">Back to Previous Page</a></li>
+            </ul>
+            <div class="clearfix"></div>
+        </div>
+        <div class="register">
+            <div class="col-md-6 login-right">
+                <h3>REGISTERED CUSTOMERS</h3>
+                <p>If you have an account with us, please log in.</p>
+                <form id="submit-form">
+                    <div>
+                        <span>Email Address<label>*</label></span>
+                        <input id="login-email" type="text">
+                    </div>
+                    <div>
+                        <span>Password<label>*</label></span>
+                        <input id="login-pass" type="password">
+                    </div>
+                    <a class="forgot" href="#">Forgot Your Password?</a>
+                    <input id="submit-form" onclick="clicked(true)" type="submit" value="Login">
+                </form>
+            </div>
+            <div class="col-md-6 login-left">
+                <h3>NEW CUSTOMERS</h3>
+                <p>By creating an account with our store, you will be able to move through the checkout process
+                    faster, store multiple shipping addresses, view and track your orders in your account and
+                    more.</p>
+                <a class="acount-btn" href="{{ url_for('register') }}">Create an Account</a>
+            </div>
+            <div class="clearfix"></div>
+        </div>
+    </div>
+{% endblock %}

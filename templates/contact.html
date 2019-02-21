@@ -1,0 +1,54 @@
+{% extends "layout.html" %}
+{% block main %}
+        <div class="col-md-9">
+            <div class="dreamcrub">
+                <ul class="breadcrumbs">
+                    <li class="home">
+                        <a href="index.html" title="Go to Home Page">Home</a>&nbsp;
+                        <span>&gt;</span>
+                    </li>
+                    <li class="women">
+                        Contact
+                    </li>
+                </ul>
+                <ul class="previous">
+                    <li><a href="index.html">Back to Previous Page</a></li>
+                </ul>
+                <div class="clearfix"></div>
+            </div>
+            <div class="map">
+                <iframe src="https://www.google.com/maps/embed?pb=!1m14!1m12!1m3!1d3150859.767904157!2d-96.62081048651531!3d39.536794757966845!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!5e0!3m2!1sen!2sin!4v1408111832978"></iframe>
+            </div>
+            <div class="contact_right">
+                <h3>Catch me</h3>
+                <form>
+                    <div class="text">
+                        <div class="text-fild">
+                            <span>Name:</span>
+                            <input type="text" class="text" value="Your Name here" onfocus="this.value = '';"
+                                   onblur="if (this.value == '') {this.value = 'Your Name here';}">
+                        </div>
+                        <div class="text-fild">
+                            <span>Email:</span>
+                            <input type="text" class="text" value="Your Email here" onfocus="this.value = '';"
+                                   onblur="if (this.value == '') {this.value = 'Your Email here';}">
+                        </div>
+                        <div class="clearfix"></div>
+                    </div>
+                    <div class="msg-fild">
+                        <span>Subject:</span>
+                        <input type="text" class="text" value="Your Subject here" onfocus="this.value = '';"
+                               onblur="if (this.value == '') {this.value = 'Your Subject here';}">
+                    </div>
+                    <div class="message-fild">
+                        <span>Message:</span>
+                        <textarea> </textarea>
+                    </div>
+                    <div class="btn-toolbar form-group">
+                        <input type="submit" id="contactFormSubmit" value="Send" class="btn btn-primary">
+                        <input type="reset" value="Clear" class="btn btn-info">
+                    </div>
+                </form>
+            </div>
+        </div>
+{% endblock %}

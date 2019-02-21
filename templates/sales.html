@@ -1,0 +1,98 @@
+{% extends "layout.html" %}
+{% block main %}
+    <div class="col-md-9 content_right">
+        <div class="dreamcrub">
+            <ul class="breadcrumbs">
+                <li class="home">
+                    <a href="{{ url_for('index') }}" title="Go to Home Page">Home</a>&nbsp;
+                    <span>&gt;</span>
+                </li>
+                <li class="women">
+                    {{ current_collection }}
+                </li>
+            </ul>
+            <ul class="previous">
+                <li><a href="{{ url_for('index') }}">Back to Previous Page</a></li>
+            </ul>
+            <div class="clearfix"></div>
+        </div>
+        <div class="mens-toolbar">
+            <div class="sort">
+                <div class="sort-by">
+                    <label>Sort By</label>
+                    <select>
+                        <option value="">
+                            Position
+                        </option>
+                        <option value="">
+                            Name
+                        </option>
+                        <option value="">
+                            Price
+                        </option>
+                    </select>
+                    <a href=""><img src="../static/images/arrow2.gif" alt="" class="v-middle"></a>
+                </div>
+            </div>
+            <ul class="women_pagenation dc_paginationA dc_paginationA06">
+                <li><a href="#" class="previous">Page:</a></li>
+                <li class="active"><a href="#">1</a></li>
+                <li><a href="#">2</a></li>
+            </ul>
+            <div class="clearfix"></div>
+        </div>
+        <div id="cbp-vm" class="cbp-vm-switcher cbp-vm-view-grid">
+            <div class="cbp-vm-options">
+                <a href="#" class="cbp-vm-icon cbp-vm-grid cbp-vm-selected" data-view="cbp-vm-view-grid"
+                   title="grid"></a>
+                <a href="#" class="cbp-vm-icon cbp-vm-list cbp-vm-not-selected" data-view="cbp-vm-view-list" title="list"></a>
+            </div>
+            <div class="pages">
+                <div class="limiter visible-desktop">
+                    <label>Show</label>
+                    <select>
+                        <option value="" selected="selected">
+                            9
+                        </option>
+                        <option value="">
+                            15
+                        </option>
+                        <option value="">
+                            30
+                        </option>
+                    </select> per page
+                </div>
+            </div>
+            <div class="clearfix"></div>
+            <ul>
+                {% for product in products %}
+                <li>
+                    <a class="cbp-vm-image" href="{{ url_for('single', id=product['id']) }}">
+                            <div class="inner_content clearfix">
+                        <div class="view view-first">
+                                <div class="product_image">
+                                    <img src="../static/images/{{ product['id'] }}/0.jpg" class="img-responsive" alt=""/>
+                                </div>
+                        </div>
+                                <div class="product_container">
+                                        <div class="cart-left">
+                                            <p class="title">{{ product['name'] }}</p>
+                                        </div>
+                                        <div class="price">{{ product['price'] }} грн.</div>
+                                        <div class="clearfix"></div>
+                                    </div>
+                            </div>
+                    </a>
+                    <div class="cbp-vm-details">
+                        {{ product['description'] }}
+                    </div>
+                    <a class="cbp-vm-icon cbp-vm-add" href="{{ url_for('single', id=product['id']) }}">Buy</a>
+                </li>
+                {% endfor %}
+            </ul>
+        </div>
+        <link href="../static/css/component.css" rel='stylesheet' type='text/css'/>
+        <script src="../static/js/cbpViewModeSwitch.js" type="text/javascript"></script>
+        <script src="../static/js/classie1.js" type="text/javascript"></script>
+    </div>
+{% endblock %}
