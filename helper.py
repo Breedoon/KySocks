@@ -1,7 +1,6 @@
 import sqlite3
 
-from flask import redirect, url_for
-
+from flask import redirect, url_for, session
 
 MAX_ITEMS_IN_CART = 10
 MAX_COLLECTION_ID = 10
@@ -43,8 +42,8 @@ def get_short_cart(cart_items):
     return str(dict(zip(cart_items.keys(), list(item['quantity'] for item in cart_items.values()))))
 
 
-def save_cart(db, user_id, cart_items):
-    db.execute("UPDATE users SET cart = :items WHERE id = :id", {'items': get_total(cart_items), 'id': user_id})
+def save_cart(db, user_id, cart_items):  # TODO: fix save_cart
+    db.execute("UPDATE users SET cart = :items WHERE id = :id", {'items': get_short_cart(cart_items), 'id': user_id})
     db.commit()
 
 
@@ -65,3 +64,15 @@ def cache():
     for product in products:
         num_products[product['id']] = product
     return collections, products, num_collections, num_products
+
+
+def is_cart_empty():
+    return not session.__contains__("cart") or session['cart'].__len__() == 0
+
+
+def get_user_for_checkout(db):
+    user = db.execute("SELECT * FROM users WHERE id = :user_id", {"user_id": session['user_id']}).fetchone()
+    for item in user:
+        if user[item] is None:
+            user[item] = ""
+    return user

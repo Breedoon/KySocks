@@ -1,0 +1,22 @@
+{% extends "layout.html" %}
+{% block main %}
+            <div class="dreamcrub">
+        <ul class="breadcrumbs">
+            <li class="home">
+                <a href="{{ url_for('index') }}" title="Go to Home Page">Home</a>&nbsp;
+                <span>&gt;</span>
+            </li>
+            <li class="women">
+                Checkout
+            </li>
+        </ul>
+        <ul class="previous">
+            <li><a href="{{ url_for('index') }}">Back to Previous Page</a></li>
+        </ul>
+        <div class="clearfix"></div>
+    </div>
+    <h1 class="title1">Your order was placed successfully</h1>
+        <p class="cart">Your order id is {{ id }}<br>Click <a href="{{ url_for('index') }}">here</a> to
+            continue
+            shopping</p>
+{% endblock %}

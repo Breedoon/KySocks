@@ -1,0 +1,50 @@
+<li><a class="active-icon c1" href="{{ url_for('cart') }}">My Cart </a>
+    <div class="rate">{% if session.__contains__("cart") %}{{ session['cart'].__len__() }}{% else %}
+        0{% endif %}</div>
+    <ul class="sub-icon1 list">
+        {% if session.__contains__("cart") and session['cart'].__len__() != 0 %}
+            <h3>Shopping cart</h3>
+            <div class="shopping_cart">
+                {% for product_id in session["cart"] %}
+                    <div id="cart-item-{{ product_id }}" class="cart_box">
+                        <div class="message">
+                            <div class="cart-single-close"
+                                 onclick="remove_from_mini_cart({{ product_id }}, -{{ session["cart"][product_id]['price'] * session["cart"][product_id]['quantity'] }})"></div>
+                            <div class="list_img"><img src="../static/images/{{ product_id }}/0.jpg"
+                                                       class="img-responsive"
+                                                       alt=""/>
+                            </div>
+                            <div class="list_desc"><h4><a
+                                    href="{{ url_for('single', id=product_id) }}">{{ session["cart"][product_id]['name'] }}</a>
+                            </h4>
+                                {{ session["cart"][product_id]['quantity'] }} x <span
+                                        class="actual">{{ session["cart"][product_id]['price'] }} грн.</span>
+                            </div>
+                            <div class="clearfix"></div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+            <div class="total">
+                <div class="total_left">CartSubtotal:</div>
+                <div id="mini-cart-total" class="total_right">{{ session['total_cart'] }} грн.</div>
+                <div class="clearfix"></div>
+            </div>
+        {% else %}
+            <h3>Shopping cart</h3>
+            <div class="shopping_cart">
+                <h5>Your shipping cart is empty.</h5>
+            </div>
+        {% endif %}
+        <div class="login_buttons">
+            <div class="check_button"><a href="{{ url_for('cart') }}">Check out</a></div>
+            <div class="login_button">{% if session.user_id %}
+                <a href="{{ url_for('logout') }}">Logout</a>
+            {% else %}
+                <a href="{{ url_for('login') }}">Login</a>
+            {% endif %}</div>
+            <div class="clearfix"></div>
+        </div>
+        <div class="clearfix"></div>
+    </ul>
+</li>

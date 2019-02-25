@@ -7,6 +7,7 @@ License URL: http://creativecommons.org/licenses/by/3.0/
 <!DOCTYPE HTML>
 <html>
 <head>
+    {#TODO: Titles#}
     <title>Kysocks — Лучший магазин носков на Земле</title>
     <link rel="icon"
           type="image/png"
@@ -24,6 +25,8 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
     } </script>
     {{ JSGlue.include() }}
     <link href="../static/css/bootstrap.css" rel='stylesheet' type='text/css'/>
+    <link href="../static/css/animate.min.css" rel='stylesheet' type='text/css'/>
+    <link href="../static/css/themify-icons.css" rel='stylesheet' type='text/css'/>
     <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
     <!-- Custom Theme files -->
     <link href="../static/css/style.css" rel='stylesheet' type='text/css'/>
@@ -31,30 +34,10 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
     <!--webfont-->
     <link href='http://fonts.googleapis.com/css?family=Montserrat:400,700' rel='stylesheet' type='text/css'>
     <script type="text/javascript" src="../static/js/jquery-1.11.1.min.js"></script>
-    <script>$(document).ready(function (c) {
-        $('.alert-close').on('click', function (c) {
-            $('.message').fadeOut('slow', function (c) {
-                $('.message').remove();
-            });
-        });
-    });
-    </script>
-    <script>$(document).ready(function (c) {
-        $('.alert-close1').on('click', function (c) {
-            $('.message1').fadeOut('slow', function (c) {
-                $('.message1').remove();
-            });
-        });
-    });
-    </script>
-    <script>$(document).ready(function (c) {
-        $('.alert-close2').on('click', function (c) {
-            $('.message2').fadeOut('slow', function (c) {
-                $('.message2').remove();
-            });
-        });
-    });
-    </script>
+    <script type="text/javascript" src="../static/js/bootstrap-notify.js"></script>
+    <script src="../static/js/cart.js"></script>
+    {# TODO: ti-icons#}
+    {# TODO: notifications#}
 </head>
 <body>
 <div class="{% if is_index %} index-banner {% else %} sales {% endif %}">
@@ -64,25 +47,27 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
                 <a href="{{ url_for('index') }}"><img src="../static/images/logo.png" alt=""/></a>
             </div>
             <div class="header-bottom-right">
-                <ul class="icon1 sub-icon1 profile_img">
+                <ul id="mini-cart-container" class="icon1 sub-icon1 profile_img">
                     <li><a class="active-icon c1" href="{{ url_for('cart') }}">My Cart </a>
-                        <div class="rate">{% if session.__contains__("cart") %}session['cart'].__len__(){% else %}
+                        <div class="rate">{% if session.__contains__("cart") %}{{ session['cart'].__len__() }}{% else %}
                             0{% endif %}</div>
                         <ul class="sub-icon1 list">
                             {% if session.__contains__("cart") and session['cart'].__len__() != 0 %}
                                 <h3>Shopping cart</h3>
                                 <div class="shopping_cart">
                                     {% for product_id in session["cart"] %}
-                                        <div class="cart_box">
+                                        <div id="cart-item-{{ product_id }}" class="cart_box">
                                             <div class="message">
-                                                <div class="cart-single-close"></div>
+                                                <div class="cart-single-close"
+                                                     onclick="remove_from_mini_cart({{ product_id }}, -{{ session["cart"][product_id]['price'] * session["cart"][product_id]['quantity'] }})"></div>
                                                 <div class="list_img"><img src="../static/images/{{ product_id }}/0.jpg"
                                                                            class="img-responsive"
                                                                            alt=""/>
                                                 </div>
                                                 <div class="list_desc"><h4><a
-                                                        href="#">{{ session["cart"][product_id]['name'] }}</a></h4>
-                                                    {{ session["cart"][product_id]['quantity'] }} x<span
+                                                        href="{{ url_for('single', id=product_id) }}">{{ session["cart"][product_id]['name'] }}</a>
+                                                </h4>
+                                                    {{ session["cart"][product_id]['quantity'] }} x <span
                                                             class="actual">{{ session["cart"][product_id]['price'] }} грн.</span>
                                                 </div>
                                                 <div class="clearfix"></div>
@@ -92,15 +77,10 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
                                 </div>
                                 <div class="total">
                                     <div class="total_left">CartSubtotal:</div>
-                                    <div class="total_right">{{ session['total_cart'] }} грн.</div>
+                                    <div id="mini-cart-total" class="total_right">{{ session['total_cart'] }} грн.</div>
                                     <div class="clearfix"></div>
                                 </div>
-                            {% else %}
-                                <h3>Shopping cart</h3>
-                                <div class="shopping_cart">
-                                    <h5>Your shipping cart is empty.</h5>
-                                </div>
-                            {% endif %}
+
                             <div class="login_buttons">
                                 <div class="check_button"><a href="{{ url_for('cart') }}">Check out</a></div>
                                 <div class="login_button">{% if session.user_id %}
@@ -110,6 +90,22 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
                                 {% endif %}</div>
                                 <div class="clearfix"></div>
                             </div>
+                            {% else %}
+                                <h3>Shopping cart</h3>
+                                <div class="shopping_cart">
+                                    <h5>Your shipping cart is empty.</h5>
+                                </div>
+
+                            <div class="login_buttons">
+                                <div class="check_button"><a href="{{ url_for('sales') }}">Shop</a></div>
+                                <div class="login_button">{% if session.user_id %}
+                                    <a href="{{ url_for('logout') }}">Logout</a>
+                                {% else %}
+                                    <a href="{{ url_for('login') }}">Login</a>
+                                {% endif %}</div>
+                                <div class="clearfix"></div>
+                            </div>
+                            {% endif %}
                             <div class="clearfix"></div>
                         </ul>
                     </li>
@@ -189,9 +185,9 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
 </div>
 <div class="{% if is_index %} content_top {% else %} about_top {% endif %}">
     <div class="container">
-        <div class="col-md-3 about_sidebar">
-            {#        TODO: Margin left#}
-            {% if collections %}
+        {% if collections %}
+            <div class="col-md-3 about_sidebar">
+                {#        TODO: Margin left #}
                 {#<ul class="menu1">
                 <li class="item1"><a href="#" class="">What To Buy ?<img class="arrow-img"
                                                                          src="../static/images/arrow.png"
@@ -246,8 +242,8 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
                             <a href="{{ url_for('sales', collection_id=collection['id']) }}">{{ collection['name'] }}</a>
                         </li>
                     {% endfor %}
-                </ul>{% endif %}
-            {#<ul class="box3_list">
+                </ul>
+                {#<ul class="box3_list">
                 <li><a href="#">New Arrivals</a></li>
                 <li><a href="#">Sales</a></li>
                 <li><a href="#">Collection '15</a></li>
@@ -256,23 +252,29 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
                 <li><a href="#">About US</a></li>
                 <li><a href="#">Contacts</a></li>
             </ul>#}
-        </div>
+            </div>
+            <div class="col-md-9 content_right">
+        {% else %}
+            <div class="col-md-{% if col_md %}{{ col_md }}{% else %}9{% endif %} col-centered">
+        {% endif %}
+
         {% block main %}{% endblock %}
-        <div class="clearfix"></div>
-    </div>
-</div>
-<div class="footer">
-    <div class="container">
-        <img src="../static/images/f_logo.png" alt=""/>
-        <p><a href="mailto:info@mycompany.com">info(at)suity.com</a></p>
-        <div class="copy">
-            <p>© 2015 All Rights Reseverd Template by <a href="http://w3layouts.com/">W3layouts</a></p>
         </div>
-        <ul class="social">
-            <li><a href="#"> <i class="fb"> </i> </a></li>
-            <li><a href="#"> <i class="tw"> </i> </a></li>
-        </ul>
+        <div class="clearfix"></div>
+        </div>
     </div>
-</div>
+    <div class="footer">
+        <div class="container">
+            <img src="../static/images/f_logo.png" alt=""/>
+            <p><a href="mailto:info@mycompany.com">info(at)suity.com</a></p>
+            <div class="copy">
+                <p>© 2015 All Rights Reseverd Template by <a href="http://w3layouts.com/">W3layouts</a></p>
+            </div>
+            <ul class="social">
+                <li><a href="#"> <i class="fb"> </i> </a></li>
+                <li><a href="#"> <i class="tw"> </i> </a></li>
+            </ul>
+        </div>
+    </div>
 </body>
 </html>

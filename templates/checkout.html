@@ -1,23 +1,166 @@
 {% extends "layout.html" %}
 {% block main %}
-    <div class="col-md-9 content_right">
-        <div class="dreamcrub">
-            <ul class="breadcrumbs">
-                <li class="home">
-                    <a href="{{ url_for('index') }}" title="Go to Home Page">Home</a>&nbsp;
-                    <span>&gt;</span>
-                </li>
-                <li class="women">
-                    Checkout
-                </li>
-            </ul>
-            <ul class="previous">
-                <li><a href="{{ url_for('index') }}">Back to Previous Page</a></li>
-            </ul>
-            <div class="clearfix"></div>
-        </div>
-        <h1 class="title1">Shopping cart is empty</h1>
-        <p class="cart">You have no items in your shopping cart.<br>Click<a href="{{ url_for('index') }}"> here</a> to continue
-            shopping</p>
+    <link href="../static/css/checkout.css" rel='stylesheet' type='text/css'/>
+    <script type="text/javascript" src="../static/js/checkout.js"></script>
+    <div class="dreamcrub">
+        <ul class="breadcrumbs">
+            <li class="home">
+                <a href="{{ url_for('index') }}" title="Go to Home Page">Home</a>&nbsp;
+                <span>&gt;</span>
+            </li>
+            <li class="women">
+                Checkout
+            </li>
+        </ul>
+        <ul class="previous">
+            <li><a href="{{ url_for('index') }}">Back to Previous Page</a></li>
+        </ul>
+        <div class="clearfix"></div>
     </div>
+    {#    TODO: if cart empty#}
+    {% if session.__contains__("cart") and session['cart'].__len__() != 0 %}
+        <div class="inner-sec-shop px-lg-4 px-3">
+            <h3 class="tittle-w3layouts my-lg-4 mt-3">Checkout </h3>
+            <div class="checkout-right">
+                <table class="timetable_sub">
+                    <thead>
+                    <tr>
+                        <th>SL No.</th>
+                        <th>Product</th>
+                        <th>Quantity</th>
+                        <th>Product Name</th>
+                        <th>Price</th>
+                        <th>Remove</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for product_id in session["cart"] %}
+                        <tr class="rem1" id="cart-table-item-{{ product_id }}">
+                            <td class="invert">{{ loop.index }}</td>
+                            <td class="invert-image">
+                                <a href="{{ url_for('single', id=product_id) }}">
+                                    <img src="../static/images/{{ product_id }}/0.jpg" alt=" "
+                                         class="img-responsive">
+                                </a>
+                            </td>
+                            <td class="invert">
+                                <div class="quantity">
+                                    <div class="quantity-select">
+                                        <div class="entry value-minus" onclick="change_item({{ product_id }}, -1, {{ session["cart"][product_id]['price'] }})">&nbsp;</div>
+                                        <div class="entry value" id="quantity-{{ product_id }}">{{ session["cart"][product_id]['quantity'] }}</div>
+                                        <div class="entry value-plus active" onclick="change_item({{ product_id }}, 1, {{ session["cart"][product_id]['price'] }})">&nbsp;</div>
+                                    </div>
+                                </div>
+                            </td>
+                            <td class="invert">{{ session["cart"][product_id]['name'] }}</td>
+                            <td class="invert" id="price-{{ product_id }}">{{ session["cart"][product_id]['quantity'] * session["cart"][product_id]['price'] }} грн.
+                            </td>
+                            <td class="invert">
+                                <div class="rem">
+                                    <span onclick="remove_from_big_cart({{ product_id }}, -1 * {{ session["cart"][product_id]['quantity'] * session["cart"][product_id]['price'] }});"
+                                          class="ti-close close_cart"></span>
+                                </div>
+
+                            </td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            <div class="checkout-left row">
+                <div class="col-md-4 checkout-left-basket">
+                    <ul>
+                        {% for product_id in session["cart"] %}
+                            <li id="cart-list-item-{{ product_id }}">
+                                <i>{{ session["cart"][product_id]['name'] }}</i>
+                                <span id="cart-list-item-price-{{ product_id }}">{{ session["cart"][product_id]['quantity'] * session["cart"][product_id]['price'] }} грн.</span>
+                            </li>
+                        {% endfor %}
+                        <li>
+                            Total
+                            <span id="big-cart-total">{{ session['total_cart'] }} грн.</span>
+                        </li>
+                    </ul>
+                </div>
+                <div class="col-md-8 address_form">
+                    <section class="creditly-wrapper wrapper">
+                        <div class="information-wrapper">
+                            <div class="first-row col-md-6">
+                                <div class="controls">
+                                    <label class="control-label">First name*</label>
+                                    <input id=first-name" class="billing-address-name form-control" type="text"
+                                           name="first_name" value="{{ firstname }}"
+                                           placeholder="First name">
+                                </div>
+                                <div class="card_number_grids">
+                                    <div class="card_number_grid_left">
+                                        <div class="controls">
+                                            <label class="control-label">Email*</label>
+                                            <input value="{{ email }}" id="email" class="form-control" type="text" placeholder="Email">
+                                        </div>
+                                    </div>
+                                    <div class="card_number_grid_right">
+                                        <div class="controls">
+                                            <label class="control-label">City*</label>
+                                            <input value="{{ city }}" id="city" class="form-control" type="text" placeholder="City">
+                                        </div>
+                                    </div>
+                                    <div class="clear"></div>
+                                </div>
+                                <div class="controls">
+                                    <label class="control-label">Password</label>
+                                    <input id="password" class="form-control" type="password" placeholder="Password" disabled="disabled">
+                                    <label><input id="remember" class="form-control" type="checkbox" {% if session.__contains__('user_id') %}disabled="disabled"
+                                    {% endif %} onclick="boxChecked()"> Remember me</label>
+
+                                </div>
+                            </div>
+                            <div class="first-row col-md-6">
+                                <div class="controls">
+                                    <label class="control-label">Last name*</label>
+                                    <input id="last-name" class="billing-address-name form-control" type="text"
+                                           name="last_name" value="{{ lastname }}"
+                                           placeholder="Last name">
+                                </div>
+                                <div class="card_number_grids">
+                                    <div class="card_number_grid_left">
+                                        <div class="controls">
+                                            <label class="control-label">Mobile number*</label>
+                                            <input value="{{ phone }}" id="phone" class="form-control" type="text"
+                                                   placeholder="Mobile number">
+                                        </div>
+                                    </div>
+                                    <div class="card_number_grid_right">
+                                        <div class="controls">
+                                            <label class="control-label">Delivery*</label>
+                                            <input value="{{ delivery }}" id="delivery" class="form-control" type="text"
+                                                   placeholder="Delivery">
+                                        </div>
+                                    </div>
+                                    <div class="clear"></div>
+                                </div>
+                                <div class="controls">
+                                    <label class="control-label">Additional information</label>
+                                    <input id="additional" class="form-control" type="text"
+                                           placeholder="Optional additional information">
+                                </div>
+                            </div>
+                        </div>
+                </section>
+                <div class="checkout-right-basket">
+                    <a onclick="checkout()">Make a Payment </a>
+                </div>
+            </div>
+
+            <div class="clearfix"></div>
+
+        </div>
+
+        </div>
+    {% else %}
+        <h1 class="title1">Shopping cart is empty</h1>
+        <p class="cart">You have no items in your shopping cart.<br>Click <a href="{{ url_for('index') }}">here</a> to
+            continue
+            shopping</p>
+    {% endif %}
 {% endblock %}

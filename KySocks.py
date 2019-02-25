@@ -1,7 +1,7 @@
 from datetime import datetime
 from helper import *
 import os
-from flask import Flask, redirect, render_template, request, session, url_for
+from flask import Flask, redirect, render_template, request, session, url_for, jsonify
 from passlib.apps import custom_app_context as pwd_context
 import sqlite3
 import email_validator
@@ -12,6 +12,9 @@ app = Flask(__name__, static_url_path='/static')
 app.secret_key = os.urandom(24)
 
 JSGlue(app)
+
+
+# TODO: unify data for layout: min-cart html, collections, product images, is empty cart,
 
 
 @app.route('/')
@@ -45,105 +48,106 @@ def contact():
 @app.route('/cart', methods=["GET", "POST"])
 def cart():
     if request.method == "POST":
-        product_id = request.form.get("product_id")
-        add = int(request.form.get("add"))
-        if add is 0:
-            return 'Nice.'
-        db = db_init()
-        product_data = db.execute("SELECT * FROM products WHERE id LIKE :code", {'code': product_id}).fetchone()
-        product_data['quantity'] = add
-        if session.__contains__('cart'):
-            cart = session['cart']
-            if cart.__len__() >= MAX_ITEMS_IN_CART and add > 0:
-                return apology('Слишком много вещей в корзине')
-            if cart.__contains__(product_id):
-                result = cart[product_id]['quantity'] + add
-                if result > MAX_ITEMS_IN_CART or result < 0:
-                    return apology('Неправильное количество')
-                if result is not 0:
-                    cart[product_id]['quantity'] = result
-                else:
-                    del cart[product_id]
-            else:
-                if add > 0:
-                    cart[product_id] = product_data
-                else:
-                    return apology('Нечего удалять')
-
-        elif add > 0:
-            cart = {product_id: product_data}
-        else:
-            return apology('Invalid quality')
-
-        session['total_cart'] = get_total(cart)
-
-        session['cart'] = cart
-        session['cart'] = session['cart']  # DO NOT REMOVE
-
-        if session.__contains__('user_id'):
-            save_cart(db, session['user_id'], session['cart'])
-        return "Nice!"
-
-    else:
-        return render_template('checkout.html')
-
-
-@app.route('/checkout', methods=["GET", "POST"])
-def checkout():
-    if request.method == "POST":
-        firstname = request.form.get("firstname")
-        lastname = request.form.get("lastname")
+        first_name = request.form.get("first-name")
+        last_name = request.form.get("last-name")
         city = request.form.get("city")
         delivery = request.form.get("delivery")
         phone = request.form.get("phone")
         email = request.form.get("email")
         password = request.form.get("password")
         additional = request.form.get("additional")  # TODO additional information
+        changes = ast.literal_eval(request.form.get("changes"))
 
+        for id in changes:
+            session['cart'][id]['quantity'] += changes[id]
+        session['total_cart'] = get_total(session['cart'])
         try:
             v = email_validator.validate_email(email, check_deliverability=False)
             email = v["email"]
         except email_validator.EmailNotValidError as e:
             return apology("Некорректный email: " + str(e))
-        if len(firstname) < 1 or len(lastname) < 1 or len(city) < 1 or len(delivery) < 1:
+        if len(first_name) < 1 or len(last_name) < 1 or len(city) < 1 or len(delivery) < 1:
             return apology("Некорректные данные")
         if len(phone) < 8:
             return apology('Некорректный номер телефона')
         db = db_init()
         user = db.execute("SELECT * FROM users WHERE username = :username", {"username": email}).fetchall()
-        if len(user) == 1:
-            if not user.__contains__(firstname):
-                db.execute("UPDATE users SET firstname = :firstname, lastname = :lastname, "
-                           "phone = :phone, delivery = :delivery WHERE username = :username",
-                           {"firstname": firstname, "lastname": lastname, "phone": phone, "delivery": delivery,
-                            "username": email})
+        if len(user) == 1:  # TODO: debug save user + make based on id instead of username
+            db.execute("UPDATE users SET firstname = :firstname, lastname = :lastname, "
+                       "phone = :phone, delivery = :delivery WHERE username = :username",
+                       {"firstname": first_name, "lastname": last_name, "phone": phone, "delivery": delivery,
+                        "username": email})
         else:
-            if password is not None:
+            if password is not None:  # TODO: check if db doesn't contain user already
                 db.execute("INSERT INTO users (username, password, firstname, lastname, phone, delivery) "
                            "VALUES(:username, :hash, :firstname, :lastname, :phone, :delivery)",
                            {"username": email, "hash": pwd_context.hash(password),
-                            "firstname": firstname, "lastname": lastname, "phone": phone, "delivery": delivery})
+                            "firstname": first_name, "lastname": last_name, "phone": phone, "delivery": delivery})
         date = str(datetime.now())
-        db.execute("INSERT INTO orders (email, phone, city, delivery, cart, total_sum, date) VALUES "
-                          "(:email, :phone, :city, :delivery, :cart, :total, :date)",
-                          {'email': email, 'phone': phone, 'city': city, 'delivery': delivery,
-                           'cart': get_short_cart(session['cart']), 'total': session['total_cart'], 'date': date})
+        db.execute("INSERT INTO orders "
+                   "(email, phone, city, delivery, cart, total_sum, date, additional_information) "
+                   "VALUES (:email, :phone, :city, :delivery, :cart, :total, :date, :additional)",
+                   {'email': email, 'phone': phone, 'city': city, 'delivery': delivery,
+                    'cart': get_short_cart(session['cart']), 'total': session['total_cart'],
+                    'date': date, 'additional': additional})
         order = db.execute("SELECT id FROM orders WHERE date IS :date", {'date': date}).fetchone()
         db.commit()
-
+        session['cart'].clear()
+        save_cart(db, session['user_id'], session['cart'])
         return url_for('success', id=order['id'])
-
     else:
+        if is_cart_empty():
+            col_md = 9
+        else:
+            col_md = 15
         if session.__contains__('user_id'):
             db = db_init()
-            user = db.execute("SELECT * FROM users WHERE id = :user_id", {"user_id": session['user_id']}).fetchone()
-            if user['firstname'] is not None:
-                return render_template('checkout.html', email=user['username'], firstname=user['firstname'],
-                                       signedin=True,
-                                       lastname=user['lastname'], city=user['city'], delivery=user['delivery'])
+            user = get_user_for_checkout(db)
+            return render_template('checkout.html', email=user['username'], firstname=user['firstname'], col_md=col_md,
+                                   lastname=user['lastname'], city=user['city'], delivery=user['delivery'])
+        return render_template('checkout.html', col_md=col_md)
+
+
+@app.route('/buy', methods=["POST"])
+def buy():
+    product_id = request.form.get("product_id")
+    add = int(request.form.get("add"))
+    if add is 0:
+        if session.__contains__('cart') and product_id in session['cart']:
+            cart = dict(session['cart'])
+            cart.pop(product_id, None)
+            session['cart'] = cart
+        return jsonify({'success': True})
+    product_data = num_products[int(product_id)]
+    product_data['quantity'] = add
+    if session.__contains__('cart'):
+        cart = dict(session['cart'])
+        if cart.__len__() >= MAX_ITEMS_IN_CART and add > 0:
+            return apology('Слишком много вещей в корзине')  # TODO: notify instead of apology
+        if cart.__contains__(product_id):
+            result = cart[product_id]['quantity'] + add
+            if result > MAX_ITEMS_IN_CART or result < 0:
+                return apology('Неправильное количество')
+            if result is not 0:
+                cart[product_id]['quantity'] = result
             else:
-                return render_template('checkout.html', email=user['username'], signedin=True)
-        return render_template('checkout.html')
+                del cart[product_id]
+        else:
+            if add > 0:
+                cart[product_id] = product_data
+            else:
+                return apology('Нечего удалять')
+    elif add > 0:
+        cart = {product_id: product_data}
+    else:
+        return apology('Invalid quality')
+    session['total_cart'] = get_total(cart)
+    session['cart'] = cart
+    if session.__contains__('user_id'):
+        db = db_init()
+        save_cart(db, session['user_id'], session['cart'])
+    return jsonify({'success': True, 'new_mini_cart': render_template('mini_cart.html'),
+                    'notify': "Item added successfully"})
 
 
 @app.route('/register', methods=["GET", "POST"])
@@ -216,7 +220,7 @@ def login():
         return url_for('index')
 
     else:
-        return render_template('login.html')
+        return render_template('login.html', col_md=7)
 
 
 @app.route('/logout')
@@ -232,7 +236,7 @@ def sales():
     curr_coll = "All"
     if request.args.__contains__('collection_id'):
         prods = db.execute("SELECT * FROM products WHERE collection_id = :collection_id",
-                              {'collection_id': request.args.get('collection_id')}).fetchall()
+                           {'collection_id': request.args.get('collection_id')}).fetchall()
         curr_coll = num_collections[int(request.args.get('collection_id'))]['name']
     return render_template('sales.html', products=prods, collections=collections, current_collection=curr_coll)
 
@@ -245,7 +249,7 @@ def single():
     data = get_product(db, request.args.get('id'))
     related = db.execute("SELECT * FROM products WHERE collection_id = :collection AND id != :id",
                          {'collection': data['collection_id'], 'id': request.args.get('id')})
-    return render_template('single.html', data=data, related=related)
+    return render_template('single.html', data=data, related=related, collections=collections)
 
 
 if __name__ == '__main__':
